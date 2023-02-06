@@ -1,0 +1,16 @@
+{-# LANGUAGE KindSignatures #-}
+
+signature Sig where
+
+import Models
+import Data.Kind
+
+data Fx :: Type -> Type
+
+instance Functor Fx
+instance Applicative Fx
+instance Monad Fx
+
+selectUserEmailById :: Int -> Fx (Maybe UserEmail)
+
+bump :: MetricName -> Fx ()

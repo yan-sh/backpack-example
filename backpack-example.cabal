@@ -1,0 +1,44 @@
+cabal-version:      3.0
+name:               backpack-example
+version:            0.1.0.0
+
+library models
+    hs-source-dirs:   src-models
+    build-depends:    base, text
+    default-language: Haskell2010
+    exposed-modules:  Models
+
+library usecases
+    hs-source-dirs:   src-usecases
+    build-depends:    base, text, models
+    default-language: Haskell2010
+    exposed-modules:  UseCases
+    signatures:       Sig
+
+library prod-impl
+    hs-source-dirs:   src-prod-impl
+    build-depends:    base, text, transformers, models
+    default-language: Haskell2010
+    exposed-modules:  Prod
+
+library test-impl
+    hs-source-dirs:   src-test-impl
+    build-depends:    base, text, models
+    default-language: Haskell2010
+    exposed-modules:  Test
+
+executable example
+  build-depends:
+    base,
+    text,
+    transformers,
+    models,
+    test-impl,
+    prod-impl,
+    usecases
+  main-is:          Main.hs
+  hs-source-dirs:   app
+  default-language: Haskell2010
+  mixins:
+    usecases(UseCases as UseCasesProd) requires (Sig as Prod),
+    usecases(UseCases as UseCasesTest) requires (Sig as Test)
