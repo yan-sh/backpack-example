@@ -1,0 +1,10 @@
+cabal-version:      3.0
+name:               test-impl
+version:            0.1.0.0
+
+
+library
+    hs-source-dirs:   .
+    build-depends:    base, text, models
+    default-language: Haskell2010
+    exposed-modules:  Test
