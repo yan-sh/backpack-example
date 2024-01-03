@@ -4,11 +4,12 @@ let
 
   bootstrap = import <nixpkgs> { };
 
-  nixpkgs = builtins.fromJSON (builtins.readFile ./nixpkgs.json);
+  lock = builtins.fromJSON (builtins.readFile ./flake.lock);
+  nixpkgs = lock.nodes.nixpkgs.locked;
 
   src = bootstrap.fetchFromGitHub {
-    owner = "NixOS";
-    repo  = "nixpkgs"; inherit (nixpkgs) rev sha256;
+    inherit (nixpkgs) rev repo owner;
+    sha256 = nixpkgs.narHash;
   };
 
   pkgs = import src { inherit config;};
@@ -26,7 +27,7 @@ let
                 modifier = (t.flip t.pipe)
                   [
                     (t.flip pkgs.haskell.lib.setBuildTarget "example")
-                    pkgs.haskell.lib.disableLibraryProfiling   
+                    pkgs.haskell.lib.disableLibraryProfiling
                     pkgs.haskell.lib.disableExecutableProfiling
                     pkgs.haskell.lib.dontCheck
                     pkgs.haskell.lib.dontHaddock
@@ -50,7 +51,7 @@ let
                 let base = builtins.baseNameOf name;
                 in pkgs.lib.cleanSourceFilter name type
                     && (type != "directory" ||  (base != "dist" && base != "dist-newstyle"))
-            ) x.src;       
+            ) x.src;
           }
       );
 
